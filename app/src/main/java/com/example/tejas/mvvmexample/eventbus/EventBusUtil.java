@@ -1,7 +1,6 @@
-package com.xiao.eventbusexample.eventbus;
+package com.example.tejas.mvvmexample.eventbus;
 
 import org.greenrobot.eventbus.EventBus;
-
 
 
 public class EventBusUtil {

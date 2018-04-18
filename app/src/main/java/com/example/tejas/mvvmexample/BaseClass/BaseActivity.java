@@ -1,6 +1,7 @@
-package com.example.tejas.mvvmexample;
+package com.example.tejas.mvvmexample.BaseClass;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
 import android.os.Bundle;
@@ -32,10 +33,15 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
         }
     }
 
+    public void startActivity(Class c){
+        Intent intent = new Intent(this,c);
+        startActivity(intent);
+    }
 
-//    abstract void addViewModel(Context context);
-    abstract void onBinding();
-    abstract int getContentView();
+
+//  abstract void addViewModel(Context context);
+    protected abstract void onBinding();
+    protected abstract int getContentView();
 
 
 

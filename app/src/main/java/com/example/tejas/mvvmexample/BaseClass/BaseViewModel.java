@@ -1,7 +1,8 @@
-package com.example.tejas.mvvmexample;
+package com.example.tejas.mvvmexample.BaseClass;
 
-import android.databinding.BaseObservable;
+import android.arch.lifecycle.ViewModel;
 
-class BaseViewModel extends BaseObservable{
+public class BaseViewModel extends ViewModel{
+
 
 }
