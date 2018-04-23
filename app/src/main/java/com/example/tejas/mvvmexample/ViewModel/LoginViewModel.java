@@ -1,38 +1,46 @@
 package com.example.tejas.mvvmexample.ViewModel;
 
-import android.content.Context;
-import android.os.Handler;
+import android.arch.lifecycle.MutableLiveData;
 
 import com.example.tejas.mvvmexample.BaseClass.BaseViewModel;
-import com.example.tejas.mvvmexample.eventbus.Event;
-import com.example.tejas.mvvmexample.eventbus.EventBusUtil;
-import com.example.tejas.mvvmexample.eventbus.EventCodes;
+import com.example.tejas.mvvmexample.DI.DaggerRetrofitComponent;
+import com.example.tejas.mvvmexample.Model.ApiResponse;
+import com.example.tejas.mvvmexample.Network.Api;
+
+import javax.inject.Inject;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class LoginViewModel extends BaseViewModel {
 
-    private Context mContext;
+    @Inject
+    Api api;
 
-
-//    public LoginViewModel(Context context) {
-//        mContext = context;
-//    }
-
-    public boolean callLogin(final String email, String pass)
-    {
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-
-                EventBusUtil.sendEvent(new Event(EventCodes.EventCode.login));
-                // Do something after 5s = 5000ms
-
-            }
-        }, 5000);
-        return true;
+    public LoginViewModel() {
+        DaggerRetrofitComponent.builder().build().inject(this);
     }
 
+    public MutableLiveData<ApiResponse> login(String leadId, String code) {
 
+        MutableLiveData<ApiResponse> apiResponseMutableLiveData = new MutableLiveData<ApiResponse>();
+
+        api.getSampleLoginData().enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                apiResponseMutableLiveData.setValue(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse> call, Throwable t) {
+                apiResponseMutableLiveData.setValue(null);
+            }
+        });
+
+        return apiResponseMutableLiveData;
+
+    }
 
 }

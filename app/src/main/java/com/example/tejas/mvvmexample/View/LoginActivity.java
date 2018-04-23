@@ -2,6 +2,7 @@ package com.example.tejas.mvvmexample.View;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
@@ -10,12 +11,6 @@ import com.example.tejas.mvvmexample.BaseClass.BaseActivity;
 import com.example.tejas.mvvmexample.R;
 import com.example.tejas.mvvmexample.ViewModel.LoginViewModel;
 import com.example.tejas.mvvmexample.databinding.ActivityLoginBinding;
-import com.example.tejas.mvvmexample.eventbus.Event;
-import com.example.tejas.mvvmexample.eventbus.EventBusUtil;
-import com.example.tejas.mvvmexample.eventbus.EventCodes;
-
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 
 public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
@@ -26,15 +21,14 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
 
     @Override
     protected void onBinding() {
-//        loginViewModel = new LoginViewModel(this);
 
-        loginViewModel= ViewModelProviders.of(this).get(LoginViewModel.class);
+        loginViewModel = ViewModelProviders.of(this).get(LoginViewModel.class);
         mBinding.setViewModel(loginViewModel);
         mBinding.setLifecycleOwner(this);
         mContext = this;
         mBinding.email.setText("binding@test.com");
         mBinding.password.setText("p@ssw0rd");
-        EventBusUtil.register(this);
+//      EventBusUtil.register(this);
     }
 
     @Override
@@ -48,21 +42,26 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
 
         if (isValid())
             showProgressLoading("loggin in ", "please wait..", false);
-        if (loginViewModel.callLogin(mEmail, mPass)) {
+
+            loginViewModel.login("", "").observe(this, o -> {
             stopLoading();
-        }
+            Toast.makeText(this, "Total is.." + o.getTotal(), Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(this, MainActivity.class));
+
+            });
+
+
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(Event event) {
-        if (event != null) {
-            if(event.getCode()== EventCodes.EventCode.login);
-            {
-                Toast.makeText(mContext,"logged In nigga !",Toast.LENGTH_SHORT).show();
-                startActivity(MainActivity.class);
-            }
-        }
-    }
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void onEvent(Event event) {
+//        if (event != null) {
+//            if(event.getCode()== EventCodes.EventCode.login);
+//            {
+//                Toast.makeText(mContext,"logged In nigga !",Toast.LENGTH_SHORT).show();
+//            }
+//        }
+//    }
 
 
     private boolean isValid() {
@@ -74,7 +73,6 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
             validate = false;
             mBinding.email.setError("Please Enter Email");
             mBinding.email.requestFocus();
-
         }
         if (!TextUtils.isEmpty(mPass)) {
             validate = true;
@@ -89,7 +87,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        EventBusUtil.unregister(this);
+//      EventBusUtil.unregister(this);
     }
 }
 
